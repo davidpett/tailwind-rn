@@ -23,6 +23,7 @@ const getStyles = rule => {
 			) {
 				return false;
 			}
+
 			return true;
 		})
 		.map(({property, value}) => {
@@ -35,6 +36,15 @@ const getStyles = rule => {
 			if (property === 'font-family') {
 				const [val] = value.split(',');
 				return [property, val === 'system-ui' ? 'System' : val];
+			}
+			if (value.indexOf('var(--') > -1) {
+				return [
+					property,
+					value
+						.replace('var(--text-opacity)', 1)
+						.replace('var(--bg-opacity)', 1)
+						.replace('var(--border-opacity)', 1)
+				];
 			}
 
 			return [property, value];
