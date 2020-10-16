@@ -1,5 +1,6 @@
 'use strict';
 const css = require('css');
+const {util} = require('prettier');
 const cssToReactNative = require('css-to-react-native').default;
 
 const remToPx = value => `${Number.parseFloat(value) * 16}px`;
@@ -47,9 +48,13 @@ module.exports = source => {
 	for (const rule of stylesheet.rules) {
 		if (rule.type === 'rule') {
 			for (const selector of rule.selectors) {
-				const utility = selector.replace(/^\./, '').replace('\\/', '/');
-
-				styles[utility] = getStyles(rule);
+				if (
+					selector.indexOf('.') === 0 &&
+					selector.indexOf(':') === -1 &&
+					selector.indexOf('.-') === -1
+				) {
+					styles[selector] = getStyles(rule);
+				}
 			}
 		}
 	}
