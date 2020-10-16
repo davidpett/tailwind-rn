@@ -3,8 +3,22 @@
 const fs = require('fs');
 const meow = require('meow');
 const postcss = require('postcss');
-const tailwind = require('tailwindcss');
+const tailwindcss = require('tailwindcss');
 const build = require('./build');
+const yargs = require('yargs');
+
+const {config, output} = yargs
+	.option('config', {
+		alias: 'c',
+		type: 'string',
+		description: 'path to config file'
+	})
+	.option('output', {
+		alias: 'o',
+		type: 'string',
+		description: 'path to output file',
+		default: 'styles.json'
+	}).argv;
 
 meow(`
 	Usage
@@ -17,11 +31,11 @@ const source = `
 @tailwind utilities;
 `;
 
-postcss([tailwind])
+postcss([config ? tailwindcss({config}) : tailwindcss])
 	.process(source, {from: undefined})
 	.then(({css}) => {
 		const styles = build(css);
-		fs.writeFileSync('styles.json', JSON.stringify(styles, null, '\t'));
+		fs.writeFileSync(output, JSON.stringify(styles, null, '\t'));
 	})
 	.catch(error => {
 		console.error('> Error occurred while generating styles');

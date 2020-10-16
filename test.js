@@ -1,5 +1,6 @@
 import test from 'ava';
-import tailwind, {getColor} from '.';
+import {create} from '.';
+const {tailwind, getColor} = create('styles.json');
 
 test('get styles for one class', t => {
 	t.deepEqual(tailwind('text-blue-500'), {color: 'rgba(66, 153, 225, 1)'});
