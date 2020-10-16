@@ -11,7 +11,21 @@ const getStyles = rule => {
 			if (property === 'line-height' && !value.endsWith('rem')) {
 				return false;
 			}
-
+			if (
+				!property ||
+				!value ||
+				[
+					'font-family',
+					'font',
+					'place-content',
+					'box-shadow',
+					'transform'
+				].includes(property) ||
+				`${property}: ${value}` === 'text-decoration: inherit' ||
+				`${property}: ${value}` === 'border-color: currentColor'
+			) {
+				return false;
+			}
 			return true;
 		})
 		.map(({property, value}) => {
