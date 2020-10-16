@@ -8,20 +8,16 @@ const remToPx = value => `${Number.parseFloat(value) * 16}px`;
 const getStyles = rule => {
 	const styles = rule.declarations
 		.filter(({property, value}) => {
-			// Skip line-height utilities without units
-			if (property === 'line-height' && !value.endsWith('rem')) {
-				return false;
-			}
 			if (
 				!property ||
 				!value ||
-				[
-					'font-family',
-					'font',
-					'place-content',
-					'box-shadow',
-					'transform'
-				].includes(property) ||
+				value.indexOf('vh') > -1 ||
+				['font', 'place-content', 'box-shadow', 'transform'].includes(
+					property
+				) ||
+				property.indexOf('--') === 0 ||
+				property.indexOf('grid') > -1 ||
+				property.indexOf('gap') > -1 ||
 				`${property}: ${value}` === 'text-decoration: inherit' ||
 				`${property}: ${value}` === 'border-color: currentColor'
 			) {
@@ -32,6 +28,13 @@ const getStyles = rule => {
 		.map(({property, value}) => {
 			if (value.endsWith('rem')) {
 				return [property, remToPx(value)];
+			}
+			if (['line-height', 'letter-spacing'].includes(property)) {
+				return [property, `${parseInt(value, 10)}`];
+			}
+			if (property === 'font-family') {
+				const [val] = value.split(',');
+				return [property, val === 'system-ui' ? 'System' : val];
 			}
 
 			return [property, value];
