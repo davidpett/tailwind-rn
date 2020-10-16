@@ -53,7 +53,8 @@ module.exports = source => {
 					selector.indexOf(':') === -1 &&
 					selector.indexOf('.-') === -1
 				) {
-					styles[selector] = getStyles(rule);
+					const utility = selector.replace(/^\./, '').replace('\\/', '/');
+					styles[utility] = getStyles(rule);
 				}
 			}
 		}
